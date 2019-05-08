@@ -57,6 +57,8 @@ public class EnvironmentIdentifierFilterTest {
 
         when(mockCtx.getUriInfo()).thenReturn(mockUriInfo);
         when(mockUriInfo.getQueryParameters()).thenReturn(mockMap);
+
+        EnvironmentUtil.setEnvironment(null);
     }
 
     @Test
@@ -84,6 +86,13 @@ public class EnvironmentIdentifierFilterTest {
         this.filterWithTransformers.filter(mockCtx);
 
         assertEquals(FINAL_TRANSFORMED, EnvironmentUtil.getEnvironment());
+    }
+
+    @Test
+    public void testTransformersNoEnvSet() {
+        this.filterWithTransformers.filter(mockCtx);
+
+        assertNull(EnvironmentUtil.getEnvironment());
     }
 
     @Test

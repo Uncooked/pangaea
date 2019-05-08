@@ -3,6 +3,7 @@ package com.cvent.pangaea.filter;
 
 import com.cvent.pangaea.MultiEnvAware;
 import com.cvent.pangaea.util.EnvironmentUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,18 +47,20 @@ public class EnvironmentIdentifierFilter implements ContainerRequestFilter, Cont
 
         String environmentInRequest = getEnvParamFromRequest(requestContext);
 
+        // let nulls be passed into the transformers
+        String transformedEnv = this.transformers.stream().reduce(
+                environmentInRequest, (curEnv, fn) -> fn.apply(curEnv), (a, b) -> b
+        );
 
-        if (environmentInRequest != null) {
-
-            String transformedEnv = this.transformers.stream().reduce(
-                    environmentInRequest, (curEnv, fn) -> fn.apply(curEnv), (a, b) -> b
+        if (StringUtils.compare(environmentInRequest, transformedEnv) != 0) {
+            LOG.debug(
+                    "Environment was updated from %s to %s due to transformations", environmentInRequest, transformedEnv
             );
+        }
 
-            if (!environmentInRequest.equals(transformedEnv)) {
-                LOG.debug(
-                        "Changed environment from %s to %s due to transformers", environmentInRequest, transformedEnv
-                );
-            }
+        // null-guard setEnvironment on null. Each request should spin its own ThreadLocal so environment
+        // will be defaulted to null regardless.
+        if (transformedEnv != null) {
 
             EnvironmentUtil.setEnvironment(transformedEnv);
         }
