@@ -46,12 +46,12 @@ public class EnvironmentIdentifierFilter implements ContainerRequestFilter, Cont
 
         String environmentInRequest = getEnvParamFromRequest(requestContext);
 
-        String transformedEnv = this.transformers.stream().reduce(
-                environmentInRequest, (curEnv, fn) -> fn.apply(curEnv), (a, b) -> b
-        );
-
 
         if (environmentInRequest != null) {
+
+            String transformedEnv = this.transformers.stream().reduce(
+                    environmentInRequest, (curEnv, fn) -> fn.apply(curEnv), (a, b) -> b
+            );
 
             if (!environmentInRequest.equals(transformedEnv)) {
                 LOG.debug(

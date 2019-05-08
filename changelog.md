@@ -1,6 +1,6 @@
 # Change Log
 
-## [3.0.4] (2019-05-08)
+## [3.1.0] (2019-05-08)
 - Added optional "transformers" on `EnvironmentIdentifierFilter` which allow last-minute
 modification of the environment currently set, before it is retrievable from `EnvironmentUtil`
 

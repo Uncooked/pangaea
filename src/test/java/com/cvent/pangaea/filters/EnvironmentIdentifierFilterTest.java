@@ -13,12 +13,17 @@ import javax.ws.rs.core.UriInfo;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for the EnvironmentIdentifierFilter
+ */
 public class EnvironmentIdentifierFilterTest {
 
     private EnvironmentIdentifierFilter filter;
+    private EnvironmentIdentifierFilter filterToNull;
     private EnvironmentIdentifierFilter filterWithTransformers;
     private ContainerRequestContext mockCtx;
     private UriInfo mockUriInfo;
@@ -40,6 +45,11 @@ public class EnvironmentIdentifierFilterTest {
                         key -> SECOND_TRANSFORMED.equals(key) ? FINAL_TRANSFORMED : key
                 )
         );
+        this.filterToNull = new EnvironmentIdentifierFilter(
+                Arrays.asList(
+                        key -> null
+                )
+        );
 
         mockCtx = mock(ContainerRequestContext.class);
         mockUriInfo = mock(UriInfo.class);
@@ -56,6 +66,15 @@ public class EnvironmentIdentifierFilterTest {
         this.filter.filter(mockCtx);
 
         assertEquals(TEST_ENV, EnvironmentUtil.getEnvironment());
+    }
+
+    @Test
+    public void testTransformersToNull() {
+        mockMap.put(MultiEnvAware.ENVIRONMENT, Arrays.asList(TEST_ENV));
+
+        this.filterToNull.filter(mockCtx);
+
+        assertNull(EnvironmentUtil.getEnvironment());
     }
 
     @Test
