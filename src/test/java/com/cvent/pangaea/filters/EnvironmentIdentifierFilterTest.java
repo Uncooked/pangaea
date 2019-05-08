@@ -25,8 +25,8 @@ public class EnvironmentIdentifierFilterTest {
     private MultivaluedMap<String, String> mockMap;
 
     private static final String INTERMEDIATE_TRANSFORMED = "Intermediate Transformed";
+    private static final String SECOND_TRANSFORMED = "2nd Transformed";
     private static final String FINAL_TRANSFORMED = "FINAL Transformed";
-    private static final String NOT_TRANSFORMED = "Not Transformed";
     private static final String TEST_ENV = "Test";
     private static final String TEST_ENV_2 = "Test2";
 
@@ -35,8 +35,9 @@ public class EnvironmentIdentifierFilterTest {
         this.filter = new EnvironmentIdentifierFilter();
         this.filterWithTransformers = new EnvironmentIdentifierFilter(
                 Arrays.asList(
-                        key -> TEST_ENV.equals(key) ? INTERMEDIATE_TRANSFORMED : NOT_TRANSFORMED,
-                        key -> INTERMEDIATE_TRANSFORMED.equals(key) ? FINAL_TRANSFORMED : NOT_TRANSFORMED
+                        key -> TEST_ENV.equals(key) ? INTERMEDIATE_TRANSFORMED : key,
+                        key -> INTERMEDIATE_TRANSFORMED.equals(key) ? SECOND_TRANSFORMED : key,
+                        key -> SECOND_TRANSFORMED.equals(key) ? FINAL_TRANSFORMED : key
                 )
         );
 
